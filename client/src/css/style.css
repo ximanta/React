@@ -1,0 +1,28 @@
+#row1
+{
+  margin-top: 40px;
+}
+#cont{
+  margin-top: 30px;
+}
+#fav
+{
+  color:Orange;
+  background-color: black;
+}
+#home
+{
+  color:yellow;
+  background-color: black;
+}
+#movie{
+    margin-top: 30px;
+}
+body
+{
+  background-color: #47483B;
+}
+.active
+{
+  color:#CCDD11;
+}

@@ -1,0 +1,29 @@
+Using react,we designed the UI part of our application i.e. the UI that will be visible to the client.Now,to server our clients we need our own server.
+Server that can server the request made by our clients,that can validate the users and respond to their requirements.
+For this purpose,we have express.
+Express JS is a Web Application javascript framework which is used to  build a server that can serve to the request made by our clients and will respond to them 
+and send the data back to them.It will help us to store the data provided by clients.
+It will do the selective listening i.e. it will listen to the particular type of requests as per the definaton of API endpoints.
+It also helps to connect to the database and store data in it.
+It works on the principle that whenever it gets a request,it will use it and will respond to it accordingly.
+The data transfer is done with the help of APIs.APIS work on http methods like get, put, post and delete.Though there are 8 http methods but
+we require only these 4 for our functionality.APIs are the end points for the request.
+For the APIs to work,we need routes.We segregate the routes and give them relevent names that are understood by common people.Routes tells us about the path the
+ request should follow in order to process it.
+ We need to do the configuration to use Express in our application.
+ First of all,we have to install Express using sudo npm install express-generator -g and then express.
+ After that we do npm install that will install all the node modules required for our application.Now,we can start our server using npm start.
+ It will create a list of folders in our server folder that are bins,product,views and many more.
+ Bins is the folder that is native to te server and it tells us the starting point of our server.There we give the port number on which the server will run.
+ we will also have package.json present that will tell us about all the dependencies and dev dependencies of our application.
+ In www file of bin folder,we provide the main file as app.js.
+ In app.js we require all the things required for our server to run.
+ Like we reuire the express first,then we create a instance of  express  in a variable to use it.Then we require the other functionalities like body parser,
+ cacheparser as per our requirements.
+ Whenever we run our server it will start with  the package.json where  the starting file is  www file of bin folder where port number is present and 
+ then it will go to the  main configurable file i.e. app.js and will work accordingly.
+ Now,the use of Routes,we give diffrent routes for our ease.We name them as per their functionality.
+ As in our application we need two routes,one is for our users and the other one for movies.
+ First,we have to require that file then we have to use it using the express variable and define the API for it.
+ Jade is a UI engine which is provided by express,we can also use our own UI by giving its path in the static path portion.
+ In the routes given,it will work according to the API given for different HTTP methods.
