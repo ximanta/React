@@ -10,7 +10,7 @@ var Movielist=React.createClass(
 
                          return (
                            <Movie  m={movie} title={movie.Title} key={movie.imdbID} imdbId={movie.imdbID} y={movie.Year} src={movie.Poster}>
-                           </Movie>
+                           </Movie>//end to list of movies
                          );
                        });
 

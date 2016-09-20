@@ -24,8 +24,9 @@ var Searchbar=React.createClass(
                   <div>
                   <form  role="search">
                   <div className="row" id="row1">
+                          <h1 class="head">Welcome to world of Movies...!!!</h1>
                           <div className="col-md-10 col-lg-11 col-sm-10">
-                                <input type="text" placeholder="Search something" className="form-control" value={this.state.data1} onChange={this.storeData}/>
+                                <input type="text" placeholder="Search something" className="form-control" defaultValue={this.state.data1} onChange={this.storeData}/>
                             </div>
                             <div className="col-md-2 col-lg-1 col-sm-2">
                                   <button type="button"  className="btn btn-info" onClick={this.searchIt}>Search me</button>

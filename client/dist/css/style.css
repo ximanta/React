@@ -7,7 +7,7 @@
 }
 #fav
 {
-  color:Orange;
+  color:orange;
   background-color: black;
 }
 #home
@@ -25,4 +25,9 @@ body
 .active
 {
   color:#CCDD11;
+}
+.head
+{
+  align:center;
+  color:yellow;
 }

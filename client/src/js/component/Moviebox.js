@@ -7,7 +7,7 @@ var Moviebox=React.createClass(
               return {data: [],jsonData:[]};
  },
         getDefaultProps:function(){
-          return{url:'http://www.omdbapi.com/?s='};
+          return{url:'http://www.omdbapi.com/?s='};//get movies from imdb api
         },
         searchIt:function(arg1){
           $.ajax({
@@ -30,7 +30,7 @@ var Moviebox=React.createClass(
                 return(<div>
                               <Searchbar searchIt={this.searchIt} data={this.data}></Searchbar>
                                 <Movielist jsonData={this.state.jsonData}></Movielist>
-                     </div>)
+                     </div>)//end of searchbar
           }
       })
 

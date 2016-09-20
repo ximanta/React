@@ -29,7 +29,7 @@ var Moviedesc=React.createClass(
                             </div>
                             <div className="panel panel-default">
                               <div className="panel-heading">
-                              
+
                                  <a className="panel-title collapsed" data-toggle="collapse" data-parent="#panel-652836" href="#panel-element-255869">Imdb ID</a>
                               </div>
                               <div id="panel-element-133781" className="panel-collapse collapse in">

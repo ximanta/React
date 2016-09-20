@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var mongoose= require('mongoose');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var movie = require('./routes/movie');
@@ -15,6 +15,17 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+
+mongoose.connect('mongodb://localhost:27017/user',function (error){
+if(error){
+    console.log(error);
+}
+});
+var db=mongoose.connection;
+db.on('error',console.error.bind(console,'Conection Error..!!!!!!'));
+db.once('open',function(){
+    console.log("Connection eatablished to Mongo db Successfully");
+});
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -25,7 +36,7 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/m(o)?vie?', movie);
+app.use('/m(o)?vie', movie);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

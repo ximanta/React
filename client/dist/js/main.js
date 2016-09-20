@@ -26155,20 +26155,135 @@ var About=React.createClass(
 module.exports=About;
 },{"react":232}],236:[function(require,module,exports){
 var React=require('react');
-var FavouriteComp=React.createClass(
-      {displayName: "FavouriteComp",
+var Movieposter=require('./Movieposter.js');
+var Moviedesc=require('./Moviedesc.js');
+var Modal=require('./Modal.js');
+
+var Favmovie=React.createClass(
+      {displayName: "Favmovie",
+        getInitialState: function() {
+                      return {status:false};
+       },
+        changestatus:function()
+        {
+                  this.setState({status:true});
+        },
+        delete:function(){
+                        this.props.delete(this.props.imdbId);
+        },
+
          render:function(){
 
-                    return(React.createElement("div", {id: "fav"}, 
-                      React.createElement("h1", null, "All my favourite Movies are saved Here...!!!!")
-
-                      )
-                  )
+                return(
+                React.createElement("div", {className: "container", id: "movie"}, 
+                    React.createElement("div", {className: "jumbotron"}, 
+                        React.createElement("div", {className: "row"}, 
+                          React.createElement(Movieposter, {src: this.props.src}), 
+                          React.createElement(Moviedesc, {title: this.props.title, imdbId: this.props.imdbId, y: this.props.y}), 
+                          React.createElement("button", {type: "button", className: "btn btn-warning", onClick: this.delete}, "Delete"), 
+                          React.createElement("input", {type: "button", value: "Update it", className: "btn btn-primary btn-medium", "data-toggle": "modal", "data-target": "#myModal", onClick: this.changestatus}), 
+                          this.state.status?React.createElement(Modal, {handleupdate: this.props.handleupdate, closeit: this.closeit, title: this.props.title, imdbId: this.props.imdbId}):null
+                          )
+                       )
+                     ))
           }
+
       })
 
-module.exports=FavouriteComp;
-},{"react":232}],237:[function(require,module,exports){
+module.exports=Favmovie;
+},{"./Modal.js":240,"./Moviedesc.js":243,"./Movieposter.js":245,"react":232}],237:[function(require,module,exports){
+var React=require('react');
+var Fetchfav=require('./Fetchfav.js');
+var FavouriteComp=React.createClass(
+      {displayName: "FavouriteComp",
+        getInitialState: function() {
+              return {j:[]};
+ },
+
+ handleDeleteMovie: function(imdbId){
+   console.log("delete called");
+     $.ajax({
+           url: 'http://localhost:8080/movie/delete/'+imdbId,//delete a movie
+           type: 'DELETE',
+           cache: false,
+           success: function(d) {
+              this.setState({j:d});
+             console.log("successfully deleted");
+           }.bind(this),
+           error: function(xhr, status, err) {
+           console.error(this.props.url, status, err.toString());
+           }.bind(this)
+           });
+ },
+ handleupdate: function(imdbid,name){
+   $.ajax({
+         url: 'http://localhost:8080/movie/update/'+imdbid+"/"+name,//updating a particular movie by passing the id
+         type: 'PUT',
+         cache: false,
+         success: function(d) {
+                this.setState({j:d});
+           console.log("success updated");
+         }.bind(this),
+         error: function(xhr, status, err) {
+         console.error(this.props.url, status, err.toString());
+         }.bind(this)
+         });
+ },
+        componentDidMount:function(){
+
+                          $.ajax({
+                                url: 'http://localhost:8080/movie/get',//ajax call to get list of favourite movies
+                                dataType: 'json',
+                                type: 'GET',
+                                cache: false,
+                                success: function(d) {
+                                  this.setState({j:d});
+                                  console.log("success");
+
+                                }.bind(this),
+                                error: function(xhr, status, err) {
+                                console.error(this.props.url, status, err.toString());
+                                }.bind(this)
+                                });
+
+        },
+         render:function(){
+
+                                  return (
+                                    React.createElement(Fetchfav, {handleupdate: this.handleupdate, deleteHandler: this.handleDeleteMovie, data: this.state.j}
+                                    )
+                                  );
+
+               }
+             })
+
+         module.exports=FavouriteComp;
+},{"./Fetchfav.js":238,"react":232}],238:[function(require,module,exports){
+
+         var React=require('react');
+         var Favmovie=require('./Favmovie.js');
+         var Fetchfav=React.createClass(
+               {displayName: "Fetchfav",
+
+                  render:function(){
+                                     console.log("fav console" +JSON.stringify(this.props.data));
+                             var movieNodes = this.props.data.map(function(movie) {
+
+                                           return (
+                                             React.createElement(Favmovie, {handleupdate: this.props.handleupdate, delete: this.props.deleteHandler, m: movie, title: movie.moviename, key: movie.imdbid, imdbId: movie.imdbid, y: movie.year, src: movie.source}
+                                             )
+                                           );
+                                         }.bind(this));
+
+                                      return(
+                                      React.createElement("div", null, 
+                                      movieNodes
+                                       ))
+                            }
+                        })
+
+                  module.exports=Fetchfav;
+},{"./Favmovie.js":236,"react":232}],239:[function(require,module,exports){
 var React=require('react');
 
 var Home=React.createClass(
@@ -26178,13 +26293,61 @@ var Home=React.createClass(
                     return(React.createElement("div", {id: "home"}, 
                       React.createElement("h1", null, "This is My Home page for my site")
 
-                      )
+                      )//Home page 
                   )
           }
       })
 
 module.exports=Home;
-},{"react":232}],238:[function(require,module,exports){
+},{"react":232}],240:[function(require,module,exports){
+var React=require('react');
+
+var Modal=React.createClass(
+      {displayName: "Modal",
+        getInitialState: function() {
+                      return {value:this.props.title};
+       },
+        changevalue:function(e){
+
+                  this.setState({value:e.target.value});
+        },
+
+        update:function(){
+                            this.props.handleupdate(this.props.imdbId,this.state.value);
+
+        },
+        render:function(){
+               return(
+                 React.createElement("div", {id: "myModal", className: "modal fade", tabindex: "-1", role: "dialog"}, 
+                React.createElement("div", {className: "modal-dialog", role: "document"}, 
+                  React.createElement("div", {className: "modal-content"}, 
+                    React.createElement("div", {className: "modal-header"}, 
+                      React.createElement("button", {type: "button", className: "close", "data-dismiss": "modal", "aria-label": "Close"}, React.createElement("span", {"aria-hidden": "true"}, "×")), 
+                      React.createElement("h4", {className: "modal-title"}, "Update Movie")
+                    ), 
+                    React.createElement("div", {className: "modal-body"}, 
+                    React.createElement("form", {className: "form-horizontal"}, 
+                      React.createElement("div", {className: "form-group"}, 
+                        React.createElement("label", {className: "col-lg-4 control-label", for: "inputName"}, "Movie Name"), 
+                        React.createElement("div", {className: "col-lg-8"}, 
+                          React.createElement("input", {className: "form-control", id: "inputName", placeholder: this.state.value, onChange: this.changevalue, type: "text"})
+                        )
+                      )
+                    )
+
+                    ), 
+                    React.createElement("div", {className: "modal-footer"}, 
+                      React.createElement("button", {type: "button", className: "btn btn-default", "data-dismiss": "modal"}, "Close"), 
+                      React.createElement("button", {type: "button", className: "btn btn-primary", "data-dismiss": "modal", onClick: this.update}, "Save changes")
+                    )
+                  )
+                )
+              )
+              )}
+                })
+
+module.exports=Modal;
+},{"react":232}],241:[function(require,module,exports){
 var React=require('react');
 var Movieposter=require('./Movieposter.js');
 var Moviedesc=require('./Moviedesc.js');
@@ -26192,17 +26355,18 @@ var Moviedesc=require('./Moviedesc.js');
 var Movie=React.createClass(
       {displayName: "Movie",
 
+
           callIt:function(){
 
                             $.ajax({
-                                  url: 'http://localhost:8080/movie/add',
+                                  url: 'http://localhost:8080/movie/add',//Ajax call to save favourite movies in the data
                                   dataType: 'json',
                                   type: 'POST',
                                   cache: false,
                                   data: this.props.m,
                                   success: function(d) {
-
-                                  alert(this.props.title+"saved to database as"+JSON.stringify(d));
+                                    console.log("success");
+                                  alert("saved to database as");
                                   }.bind(this),
                                   error: function(xhr, status, err) {
                                   console.error(this.props.url, status, err.toString());
@@ -26218,7 +26382,7 @@ var Movie=React.createClass(
                         React.createElement("div", {className: "row"}, 
                           React.createElement(Movieposter, {src: this.props.src}), 
                           React.createElement(Moviedesc, {title: this.props.title, imdbId: this.props.imdbId, y: this.props.y}), 
-                          React.createElement("button", {type: "button", className: "btn btn-info", onClick: this.callIt}, "Add")
+                          React.createElement("button", {type: "button", className: "btn btn-info", onClick: this.callIt}, "Add to Favourites")
                           )
                        )
                      ))
@@ -26226,7 +26390,7 @@ var Movie=React.createClass(
       })
 
 module.exports=Movie;
-},{"./Moviedesc.js":240,"./Movieposter.js":242,"react":232}],239:[function(require,module,exports){
+},{"./Moviedesc.js":243,"./Movieposter.js":245,"react":232}],242:[function(require,module,exports){
 var React=require('react');
 var Searchbar=require('./Searchbar.js');
 var Movielist=require('./Movielist.js');
@@ -26236,7 +26400,7 @@ var Moviebox=React.createClass(
               return {data: [],jsonData:[]};
  },
         getDefaultProps:function(){
-          return{url:'http://www.omdbapi.com/?s='};
+          return{url:'http://www.omdbapi.com/?s='};//get movies from imdb api
         },
         searchIt:function(arg1){
           $.ajax({
@@ -26259,12 +26423,12 @@ var Moviebox=React.createClass(
                 return(React.createElement("div", null, 
                               React.createElement(Searchbar, {searchIt: this.searchIt, data: this.data}), 
                                 React.createElement(Movielist, {jsonData: this.state.jsonData})
-                     ))
+                     ))//end of searchbar
           }
       })
 
 module.exports=Moviebox;
-},{"./Movielist.js":241,"./Searchbar.js":245,"react":232}],240:[function(require,module,exports){
+},{"./Movielist.js":244,"./Searchbar.js":248,"react":232}],243:[function(require,module,exports){
 var React=require('react');
 
 var Moviedesc=React.createClass(
@@ -26296,7 +26460,7 @@ var Moviedesc=React.createClass(
                             ), 
                             React.createElement("div", {className: "panel panel-default"}, 
                               React.createElement("div", {className: "panel-heading"}, 
-                              
+
                                  React.createElement("a", {className: "panel-title collapsed", "data-toggle": "collapse", "data-parent": "#panel-652836", href: "#panel-element-255869"}, "Imdb ID")
                               ), 
                               React.createElement("div", {id: "panel-element-133781", className: "panel-collapse collapse in"}, 
@@ -26310,7 +26474,7 @@ var Moviedesc=React.createClass(
       })
 
 module.exports=Moviedesc;
-},{"react":232}],241:[function(require,module,exports){
+},{"react":232}],244:[function(require,module,exports){
 var React=require('react');
 var Movie=require('./Movie.js');
 
@@ -26323,7 +26487,7 @@ var Movielist=React.createClass(
 
                          return (
                            React.createElement(Movie, {m: movie, title: movie.Title, key: movie.imdbID, imdbId: movie.imdbID, y: movie.Year, src: movie.Poster}
-                           )
+                           )//end to list of movies
                          );
                        });
 
@@ -26335,7 +26499,7 @@ var Movielist=React.createClass(
       })
 
 module.exports=Movielist;
-},{"./Movie.js":238,"react":232}],242:[function(require,module,exports){
+},{"./Movie.js":241,"react":232}],245:[function(require,module,exports){
 var React=require('react');
 
 var Movieposter=React.createClass(
@@ -26345,13 +26509,13 @@ var Movieposter=React.createClass(
                 return(
                               React.createElement("div", {className: "col-md-4 col-lg-4 col-sm-4"}, 
                                 React.createElement("img", {alt: "Bootstrap Image Preview", src: this.props.src})
-                              )
+                              )//displaying the image
                      )
           }
       })
 
 module.exports=Movieposter;
-},{"react":232}],243:[function(require,module,exports){
+},{"react":232}],246:[function(require,module,exports){
 var React=require('react');
 var {Link}=require('react-router');
 var NavLink=React.createClass(
@@ -26364,13 +26528,14 @@ var NavLink=React.createClass(
       })
       
   module.exports=NavLink;
-},{"react":232,"react-router":81}],244:[function(require,module,exports){
+},{"react":232,"react-router":81}],247:[function(require,module,exports){
 var React=require('react');
 var {Link}=require('react-router');
 var NavLink=require('./NavLink.js');
 
 var Navbar=React.createClass(
       {displayName: "Navbar",
+
          render:function(){
 
                 return(
@@ -26397,13 +26562,13 @@ var Navbar=React.createClass(
                   			)
                   		)
                   	)
-                  )
+                  )//end of container
                 )
           }
       })
 
 module.exports=Navbar;
-},{"./NavLink.js":243,"react":232,"react-router":81}],245:[function(require,module,exports){
+},{"./NavLink.js":246,"react":232,"react-router":81}],248:[function(require,module,exports){
 var React=require('react');
 
 var Searchbar=React.createClass(
@@ -26430,8 +26595,9 @@ var Searchbar=React.createClass(
                   React.createElement("div", null, 
                   React.createElement("form", {role: "search"}, 
                   React.createElement("div", {className: "row", id: "row1"}, 
+                          React.createElement("h1", {class: "head"}, "Welcome to world of Movies...!!!"), 
                           React.createElement("div", {className: "col-md-10 col-lg-11 col-sm-10"}, 
-                                React.createElement("input", {type: "text", placeholder: "Search something", className: "form-control", value: this.state.data1, onChange: this.storeData})
+                                React.createElement("input", {type: "text", placeholder: "Search something", className: "form-control", defaultValue: this.state.data1, onChange: this.storeData})
                             ), 
                             React.createElement("div", {className: "col-md-2 col-lg-1 col-sm-2"}, 
                                   React.createElement("button", {type: "button", className: "btn btn-info", onClick: this.searchIt}, "Search me")
@@ -26443,7 +26609,7 @@ var Searchbar=React.createClass(
       })
 
 module.exports=Searchbar;
-},{"react":232}],246:[function(require,module,exports){
+},{"react":232}],249:[function(require,module,exports){
 var React=require('react');
 var ReactDOM=require('react-dom');
 var Moviebox=require('./component/Moviebox.js');
@@ -26476,4 +26642,4 @@ ReactDOM.render(React.createElement(Router, {history: hashHistory},
                     )
 
                 ),document.getElementById('app'));
-},{"./component/About.js":235,"./component/FavouriteComp.js":236,"./component/Home.js":237,"./component/Moviebox.js":239,"./component/Navbar.js":244,"react":232,"react-dom":51,"react-router":81}]},{},[246]);
+},{"./component/About.js":235,"./component/FavouriteComp.js":237,"./component/Home.js":239,"./component/Moviebox.js":242,"./component/Navbar.js":247,"react":232,"react-dom":51,"react-router":81}]},{},[249]);

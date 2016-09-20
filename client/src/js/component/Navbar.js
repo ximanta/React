@@ -4,6 +4,7 @@ var NavLink=require('./NavLink.js');
 
 var Navbar=React.createClass(
       {
+
          render:function(){
 
                 return(
@@ -18,7 +19,7 @@ var Navbar=React.createClass(
                   					<NavLink to="/search_Movie">Search Movie</NavLink>
                   				</li>
                   				<li>
-                  					<Link to="/favourite_Movie">Favourite Movie</Link>
+                  					<Link to="/favourite_Movie" >Favourite Movie</Link>
                   				</li>
                           <li>
                             <Link  to="/about/react">About React</Link>
@@ -30,7 +31,7 @@ var Navbar=React.createClass(
                   			</ul>
                   		</div>
                   	</div>
-                  </div>
+                  </div>//end of container
                 )
           }
       })

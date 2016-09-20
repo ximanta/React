@@ -25,7 +25,7 @@ ReactDOM.render(<Router history={hashHistory}>
                             <IndexRoute component={Home}/>
                             <Route path='/home' component={Home}/>
                             <Route path='/search_Movie' component={Moviebox}/>
-                            <Route path='/favourite_Movie' component={FavouriteComp}/>
+                            <Route path='/favourite_Movie' component={FavouriteComp} />
                             <Route path='/about/:aboutId' component={About}/>
                     </Route>
 
